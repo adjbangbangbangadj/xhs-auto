@@ -1,0 +1,167 @@
+[
+  {
+    "idea_id": "001",
+    "theme": "计算机复试自我介绍怎么写？",
+    "audience": "复试学生",
+    "pain_point": "不知道自我介绍该讲经历、成绩还是项目，容易写成流水账。",
+    "content_type": "方法论",
+    "priority": 5,
+    "status": "待生成",
+    "source": "手动",
+    "notes": "强调结构模板和 AI 打磨方式。"
+  },
+  {
+    "idea_id": "002",
+    "theme": "复试项目介绍怎么准备？",
+    "audience": "复试学生",
+    "pain_point": "项目做过但讲不清背景、职责、难点和结果。",
+    "content_type": "模板",
+    "priority": 5,
+    "status": "待生成",
+    "source": "手动",
+    "notes": "输出项目介绍四段式。"
+  },
+  {
+    "idea_id": "003",
+    "theme": "老师追问项目细节怎么办？",
+    "audience": "复试学生",
+    "pain_point": "害怕被问到技术细节后卡住。",
+    "content_type": "Prompt",
+    "priority": 5,
+    "status": "待生成",
+    "source": "1v1",
+    "notes": "加入导师追问模拟 Prompt。"
+  },
+  {
+    "idea_id": "004",
+    "theme": "英文自我介绍不会写怎么办？",
+    "audience": "复试学生",
+    "pain_point": "英文表达不自然，不知道怎么控制长度和难度。",
+    "content_type": "模板",
+    "priority": 4,
+    "status": "待生成",
+    "source": "评论",
+    "notes": "强调简单准确。"
+  },
+  {
+    "idea_id": "005",
+    "theme": "专业课忘了怎么办？",
+    "audience": "复试学生",
+    "pain_point": "复试前发现数据结构、计网、操作系统知识点混乱。",
+    "content_type": "清单",
+    "priority": 5,
+    "status": "待生成",
+    "source": "手动",
+    "notes": "给 7 天复习优先级。"
+  },
+  {
+    "idea_id": "006",
+    "theme": "简历项目太普通怎么讲出亮点？",
+    "audience": "求职学生",
+    "pain_point": "项目只是课程作业或小 demo，不知道怎么表达价值。",
+    "content_type": "案例",
+    "priority": 4,
+    "status": "待生成",
+    "source": "私信",
+    "notes": "不能鼓励伪造，强调真实提炼。"
+  },
+  {
+    "idea_id": "007",
+    "theme": "跨考计算机复试怎么补短板？",
+    "audience": "复试学生",
+    "pain_point": "跨考学生担心专业基础和项目经历不足。",
+    "content_type": "方法论",
+    "priority": 4,
+    "status": "待生成",
+    "source": "评论",
+    "notes": "给短板补齐路线。"
+  },
+  {
+    "idea_id": "008",
+    "theme": "复试被问为什么选择我们学校怎么答？",
+    "audience": "复试学生",
+    "pain_point": "回答容易空泛，像背模板。",
+    "content_type": "模板",
+    "priority": 4,
+    "status": "待生成",
+    "source": "手动",
+    "notes": "不编造导师信息。"
+  },
+  {
+    "idea_id": "009",
+    "theme": "如何用 AI 模拟复试导师追问？",
+    "audience": "复试学生",
+    "pain_point": "缺少真实追问训练，不知道自己的回答漏洞。",
+    "content_type": "Prompt",
+    "priority": 5,
+    "status": "待生成",
+    "source": "AI建议",
+    "notes": "核心 AI 提效内容。"
+  },
+  {
+    "idea_id": "010",
+    "theme": "复试前 7 天怎么冲刺？",
+    "audience": "复试学生",
+    "pain_point": "时间短、任务多，不知道先准备什么。",
+    "content_type": "清单",
+    "priority": 5,
+    "status": "待生成",
+    "source": "手动",
+    "notes": "输出日程表。"
+  },
+  {
+    "idea_id": "011",
+    "theme": "复试项目中如何讲清楚个人贡献？",
+    "audience": "复试学生",
+    "pain_point": "团队项目里不知道如何诚实说明自己做了什么。",
+    "content_type": "模板",
+    "priority": 4,
+    "status": "待生成",
+    "source": "1v1",
+    "notes": "强调不夸大。"
+  },
+  {
+    "idea_id": "012",
+    "theme": "复试老师问毕设细节怎么准备？",
+    "audience": "本科生",
+    "pain_point": "毕设还没完全做完，担心被问进度和技术路线。",
+    "content_type": "清单",
+    "priority": 4,
+    "status": "待生成",
+    "source": "私信",
+    "notes": "不能代做毕设。"
+  },
+  {
+    "idea_id": "013",
+    "theme": "没有科研经历复试怎么表达？",
+    "audience": "复试学生",
+    "pain_point": "担心没有论文和科研训练会被扣分。",
+    "content_type": "方法论",
+    "priority": 4,
+    "status": "待生成",
+    "source": "评论",
+    "notes": "强调学习能力和项目复盘。"
+  },
+  {
+    "idea_id": "014",
+    "theme": "如何用 AI 整理专业课问答？",
+    "audience": "复试学生",
+    "pain_point": "知识点多，整理问答效率低。",
+    "content_type": "Prompt",
+    "priority": 5,
+    "status": "待生成",
+    "source": "AI建议",
+    "notes": "输出专业课问答 Prompt。"
+  },
+  {
+    "idea_id": "015",
+    "theme": "如何准备计算机复试英文问答？",
+    "audience": "复试学生",
+    "pain_point": "不知道常见英文问题、回答长度和表达难度。",
+    "content_type": "清单",
+    "priority": 4,
+    "status": "待生成",
+    "source": "手动",
+    "notes": "给常见问题和练习方式。"
+  }
+]

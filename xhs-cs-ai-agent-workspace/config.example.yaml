@@ -1,0 +1,41 @@
+app:
+  mode: "feishu-lite"
+  dry_run_default: true
+
+llm:
+  provider: "openai-compatible"
+  base_url: "https://api.openai.com/v1"
+  api_key_env: "LLM_API_KEY"
+  model: "gpt-4.1-mini"
+  temperature: 0.7
+  max_tokens: 3000
+
+content_store:
+  provider: "feishu"
+
+feishu:
+  enabled: false
+  app_id: "your_feishu_app_id"
+  app_secret_env: "FEISHU_APP_SECRET"
+  app_token: "your_bitable_app_token"
+  table_ids:
+    ideas: "your_ideas_table_id"
+    contents: "your_contents_table_id"
+    publishing: "your_publishing_table_id"
+
+content:
+  niche: "计算机复试 AI 准备"
+  target_audience: "计算机考研/保研复试学生"
+  output_language: "zh-CN"
+
+paths:
+  draft_dir: "content/drafts"
+  reviewed_dir: "content/reviewed"
+  package_dir: "content/packages"
+  published_dir: "posts/published"
+  review_report_dir: "reports/review"
+  score_report_dir: "reports/score"
+  weekly_report_dir: "reports/weekly"
+  mock_ideas: "mock/ideas.json"
+  mock_content_records: "mock/content_records.json"
+  mock_published_records: "mock/published_records.json"

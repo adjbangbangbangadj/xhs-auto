@@ -1,0 +1,30 @@
+.env
+**/.env
+
+# Local config and secrets
+config.yaml
+**/config.yaml
+*.key
+*.pem
+
+# Python caches and virtualenvs
+__pycache__/
+**/__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Generated pipeline outputs
+xhs-cs-ai-agent-workspace/content/
+xhs-cs-ai-agent-workspace/posts/
+xhs-cs-ai-agent-workspace/reports/
+xhs-cs-ai-agent-workspace/debug_publish_page.png
+
+# Xiaohongshu login/cookie/browser state
+xhs-cs-ai-agent-workspace/mcp_xhs_publish/.xhs_cookies.json
+xhs-cs-ai-agent-workspace/mcp_xhs_publish/.xhs_browser_data/
+**/*cookies*.json
+
+# Local IDE / app state
+.DS_Store
+.claude/settings.local.json

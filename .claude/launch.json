@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Web 工作台 (Gradio)",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["xhs-cs-ai-agent-workspace/web_app.py"],
+      "port": 7860
+    }
+  ]
+}

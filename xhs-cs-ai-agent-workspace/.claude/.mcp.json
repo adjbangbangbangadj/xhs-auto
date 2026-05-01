@@ -1,0 +1,10 @@
+{
+  "mcpServers": {},
+  "disabledExperimentalMcpServers": {
+    "xhs-publish": {
+      "command": "python",
+      "args": ["-m", "mcp_xhs_publish.server"],
+      "note": "Disabled in Phase 1. Not used by pipeline, app.py, or web_app.py."
+    }
+  }
+}

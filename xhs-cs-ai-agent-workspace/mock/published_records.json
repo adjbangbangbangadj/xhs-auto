@@ -1,0 +1,72 @@
+[
+  {
+    "post_id": "p001",
+    "title": "复试自我介绍别写成流水账",
+    "published_at": "2026-04-22",
+    "platform": "小红书",
+    "url": "https://www.xiaohongshu.com/mock/p001",
+    "views": 3200,
+    "likes": 168,
+    "favorites": 245,
+    "comments": 42,
+    "follows": 31,
+    "dm_count": 18,
+    "notes": "收藏高，评论集中在模板。"
+  },
+  {
+    "post_id": "p002",
+    "title": "项目介绍四段式模板",
+    "published_at": "2026-04-23",
+    "platform": "小红书",
+    "url": "https://www.xiaohongshu.com/mock/p002",
+    "views": 2800,
+    "likes": 132,
+    "favorites": 210,
+    "comments": 28,
+    "follows": 22,
+    "dm_count": 15,
+    "notes": "模板类表现稳定。"
+  },
+  {
+    "post_id": "p003",
+    "title": "用 AI 模拟导师追问",
+    "published_at": "2026-04-24",
+    "platform": "小红书",
+    "url": "https://www.xiaohongshu.com/mock/p003",
+    "views": 4100,
+    "likes": 260,
+    "favorites": 390,
+    "comments": 61,
+    "follows": 48,
+    "dm_count": 36,
+    "notes": "Prompt 类转粉和私信较好。"
+  },
+  {
+    "post_id": "p004",
+    "title": "专业课忘了先补这几块",
+    "published_at": "2026-04-25",
+    "platform": "小红书",
+    "url": "https://www.xiaohongshu.com/mock/p004",
+    "views": 1800,
+    "likes": 76,
+    "favorites": 120,
+    "comments": 19,
+    "follows": 13,
+    "dm_count": 9,
+    "notes": "实用但标题可以更具体。"
+  },
+  {
+    "post_id": "p005",
+    "title": "英文自我介绍不要硬背长句",
+    "published_at": "2026-04-26",
+    "platform": "小红书",
+    "url": "https://www.xiaohongshu.com/mock/p005",
+    "views": 2300,
+    "likes": 98,
+    "favorites": 175,
+    "comments": 24,
+    "follows": 17,
+    "dm_count": 12,
+    "notes": "英文类可继续做问答系列。"
+  }
+]

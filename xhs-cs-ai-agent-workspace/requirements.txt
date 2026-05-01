@@ -1,0 +1,8 @@
+openai
+pyyaml
+python-dotenv
+requests
+typer
+rich
+gradio
+mcp
