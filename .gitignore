@@ -19,6 +19,7 @@ xhs-cs-ai-agent-workspace/content/
 xhs-cs-ai-agent-workspace/posts/
 xhs-cs-ai-agent-workspace/reports/
 xhs-cs-ai-agent-workspace/debug_publish_page.png
+content-factory-output-*.zip
 
 # Xiaohongshu login/cookie/browser state
 xhs-cs-ai-agent-workspace/mcp_xhs_publish/.xhs_cookies.json
