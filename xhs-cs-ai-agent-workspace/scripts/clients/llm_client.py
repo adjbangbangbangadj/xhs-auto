@@ -11,6 +11,13 @@ class OpenAICompatibleLLMClient:
                 "缺少 openai SDK。请先运行 pip install -r requirements.txt，"
                 "或使用 --dry-run 跑本地模拟流程。"
             ) from exc
+        try:
+            import httpx
+        except ImportError as exc:
+            raise RuntimeError(
+                "缺少 httpx 依赖。请先运行 pip install -r requirements.txt，"
+                "或使用 --dry-run 跑本地模拟流程。"
+            ) from exc
 
         llm_config = config.get("llm", {})
         api_key_env = llm_config.get("api_key_env", "LLM_API_KEY")
@@ -24,9 +31,11 @@ class OpenAICompatibleLLMClient:
         self.model = llm_config.get("model", "gpt-4.1-mini")
         self.temperature = float(llm_config.get("temperature", 0.7))
         self.max_tokens = int(llm_config.get("max_tokens", 3000))
+        self.trust_env = bool(llm_config.get("trust_env", False))
         self.client = OpenAI(
             api_key=api_key,
             base_url=llm_config.get("base_url", "https://api.openai.com/v1"),
+            http_client=httpx.Client(trust_env=self.trust_env),
         )
 
     def chat(self, messages: list[dict[str, str]]) -> str:

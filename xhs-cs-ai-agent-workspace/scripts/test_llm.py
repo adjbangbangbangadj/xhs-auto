@@ -1,4 +1,5 @@
 import argparse
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -7,6 +8,11 @@ from utils import cli_error, load_config, read_json, read_text, render_template,
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+
+def configure_stdout() -> None:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(errors="replace")
 
 
 def project_path(path: str | Path) -> Path:
@@ -83,6 +89,7 @@ def run_generation(
 
 
 def main() -> None:
+    configure_stdout()
     parser = argparse.ArgumentParser(
         description="Test the real LLM only. This script does not read or write Feishu."
     )
