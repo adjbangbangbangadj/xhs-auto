@@ -1,0 +1,126 @@
+name: Generate Content
+
+on:
+  workflow_dispatch:
+    inputs:
+      idea_id:
+        description: "Optional idea_id for single content generation"
+        required: false
+        type: string
+      limit:
+        description: "Number of ideas to generate in batch mode"
+        required: false
+        default: "3"
+        type: string
+      dry_run:
+        description: "Run without real APIs"
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+jobs:
+  generate-content:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: xhs-cs-ai-agent-workspace
+    env:
+      LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+      FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+      LLM_BASE_URL: ${{ vars.LLM_BASE_URL }}
+      LLM_MODEL: ${{ vars.LLM_MODEL }}
+      FEISHU_APP_ID: ${{ vars.FEISHU_APP_ID }}
+      FEISHU_APP_TOKEN: ${{ vars.FEISHU_APP_TOKEN }}
+      FEISHU_TABLE_ID_IDEAS: ${{ vars.FEISHU_TABLE_ID_IDEAS }}
+      FEISHU_TABLE_ID_CONTENTS: ${{ vars.FEISHU_TABLE_ID_CONTENTS }}
+      FEISHU_TABLE_ID_PUBLISHING: ${{ vars.FEISHU_TABLE_ID_PUBLISHING }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: xhs-cs-ai-agent-workspace/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Prepare config
+        run: cp config.example.yaml config.yaml
+
+      - name: Configure real API mode
+        if: ${{ inputs.dry_run == 'false' }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+
+          import yaml
+
+          required = [
+              "LLM_API_KEY",
+              "FEISHU_APP_SECRET",
+              "FEISHU_APP_ID",
+              "FEISHU_APP_TOKEN",
+              "FEISHU_TABLE_ID_IDEAS",
+              "FEISHU_TABLE_ID_CONTENTS",
+              "FEISHU_TABLE_ID_PUBLISHING",
+          ]
+          missing = [name for name in required if not os.getenv(name)]
+          if missing:
+              raise SystemExit("Missing GitHub Secrets/Variables: " + ", ".join(missing))
+
+          path = Path("config.yaml")
+          config = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+          config.setdefault("feishu", {})["enabled"] = True
+          config["feishu"]["app_id"] = os.environ["FEISHU_APP_ID"]
+          config["feishu"]["app_token"] = os.environ["FEISHU_APP_TOKEN"]
+          config["feishu"]["table_ids"] = {
+              "ideas": os.environ["FEISHU_TABLE_ID_IDEAS"],
+              "contents": os.environ["FEISHU_TABLE_ID_CONTENTS"],
+              "publishing": os.environ["FEISHU_TABLE_ID_PUBLISHING"],
+          }
+          llm = config.setdefault("llm", {})
+          if os.getenv("LLM_BASE_URL"):
+              llm["base_url"] = os.environ["LLM_BASE_URL"]
+          if os.getenv("LLM_MODEL"):
+              llm["model"] = os.environ["LLM_MODEL"]
+          path.write_text(yaml.safe_dump(config, allow_unicode=True, sort_keys=False), encoding="utf-8")
+          PY
+
+      - name: Run content pipeline
+        env:
+          IDEA_ID: ${{ inputs.idea_id }}
+          LIMIT: ${{ inputs.limit }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          if [ -n "$IDEA_ID" ]; then
+            CMD=(python -m pipeline run --idea-id "$IDEA_ID")
+          else
+            CMD=(python -m pipeline batch --limit "${LIMIT:-3}")
+          fi
+
+          if [ "$DRY_RUN" = "true" ]; then
+            CMD+=(--dry-run)
+          fi
+
+          "${CMD[@]}"
+
+      - name: Upload content artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-factory-output-${{ github.run_id }}
+          if-no-files-found: warn
+          path: |
+            xhs-cs-ai-agent-workspace/content/reviewed/
+            xhs-cs-ai-agent-workspace/content/packages/
+            xhs-cs-ai-agent-workspace/reports/review/
+            xhs-cs-ai-agent-workspace/reports/score/
+

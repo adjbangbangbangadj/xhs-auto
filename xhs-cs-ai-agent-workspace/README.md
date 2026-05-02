@@ -193,6 +193,164 @@ http://127.0.0.1:7860/
 
 模型配置页不会把密钥保存到 `.env`、`config.yaml` 或其他磁盘文件。它只会写入当前运行中的 `web_app.py` 进程环境变量；关闭或重启后需要重新填写。
 
+## GitHub Actions 内容 CI/CD
+
+阶段 2 增加了 GitHub Actions，用来在云端执行 dry-run 内容流水线、手动生成内容 artifact、定时或手动生成周复盘。
+
+工作流文件位于仓库根目录：
+
+```text
+.github/workflows/smoke-test.yml
+.github/workflows/generate-content.yml
+.github/workflows/weekly-review.yml
+```
+
+这些 workflow 的运行目录是 `xhs-cs-ai-agent-workspace/`。每次运行都会先从 `config.example.yaml` 临时复制出 `config.yaml`，不会把本地 `config.yaml` 提交到仓库。
+
+### smoke-test.yml
+
+触发方式：
+
+- `push`
+- `pull_request`
+- 手动 `workflow_dispatch`
+
+运行内容：
+
+```bash
+pip install -r requirements.txt
+python -m pipeline run --idea-id 001 --dry-run
+python -m pipeline weekly-review --dry-run
+python scripts/run_smoke_tests.py
+```
+
+这个 workflow 永远使用 dry-run，不需要 GitHub Secrets。
+
+### generate-content.yml
+
+在 GitHub 仓库页面进入：
+
+```text
+Actions → Generate Content → Run workflow
+```
+
+输入参数：
+
+- `idea_id`：可选。填写后生成指定单篇内容；
+- `limit`：可选。`idea_id` 为空时批量生成多少篇，默认 `3`；
+- `dry_run`：必填，默认 `true`，可选 `true` / `false`。
+
+运行逻辑：
+
+```text
+idea_id 不为空 → python -m pipeline run --idea-id <idea_id> [--dry-run]
+idea_id 为空   → python -m pipeline batch --limit <limit> [--dry-run]
+```
+
+上传 artifact：
+
+```text
+content/reviewed/
+content/packages/
+reports/review/
+reports/score/
+```
+
+Artifact 名称类似：
+
+```text
+content-factory-output-<run_id>
+```
+
+### weekly-review.yml
+
+触发方式：
+
+- 手动 `workflow_dispatch`
+- 定时 `schedule`
+
+默认定时配置：
+
+```yaml
+cron: "0 12 * * 0"
+```
+
+GitHub Actions 的 cron 使用 UTC。上面的时间表示每周日 12:00 UTC，约等于北京时间每周日 20:00。
+
+手动触发路径：
+
+```text
+Actions → Weekly Review → Run workflow
+```
+
+运行内容：
+
+```bash
+python -m pipeline weekly-review [--dry-run]
+```
+
+上传 artifact：
+
+```text
+reports/weekly/
+```
+
+Artifact 名称类似：
+
+```text
+weekly-review-<run_id>
+```
+
+### 下载 artifact
+
+1. 打开 GitHub 仓库的 `Actions` 页面；
+2. 点进某一次 workflow run；
+3. 在页面底部找到 `Artifacts`；
+4. 下载 `content-factory-output-*` 或 `weekly-review-*`；
+5. 解压后人工查看 reviewed 内容、发布包、质检报告和评分报告。
+
+### GitHub Secrets 和 Variables
+
+`dry_run=true` 时不需要任何 secrets。
+
+`dry_run=false` 时才需要配置真实 API。至少需要：
+
+GitHub Secrets：
+
+```text
+LLM_API_KEY
+FEISHU_APP_SECRET
+```
+
+GitHub Variables：
+
+```text
+FEISHU_APP_ID
+FEISHU_APP_TOKEN
+FEISHU_TABLE_ID_IDEAS
+FEISHU_TABLE_ID_CONTENTS
+FEISHU_TABLE_ID_PUBLISHING
+```
+
+可选 GitHub Variables：
+
+```text
+LLM_BASE_URL
+LLM_MODEL
+```
+
+配置路径：
+
+```text
+Settings → Secrets and variables → Actions
+```
+
+注意：不要把 `.env`、`config.yaml`、真实 API key、飞书 app secret、小红书 Cookie 或登录态提交到仓库。
+
+### Actions 仍然不自动发布小红书
+
+GitHub Actions 只负责生成内容、质检、评分、生成发布包和周复盘 artifact。它不会自动登录小红书，不会自动发布，不会自动评论，不会自动私信，也不会做浏览器自动化。最终发布仍然需要人工审核和人工完成。
+
 ## 测试方法
 
 阶段 1 dry-run 测试：
