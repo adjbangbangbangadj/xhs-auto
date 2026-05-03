@@ -18,7 +18,7 @@ class FeishuContentStore:
 
         self.app_id = feishu_config.get("app_id")
         secret_env = feishu_config.get("app_secret_env", "FEISHU_APP_SECRET")
-        self.app_secret = os.getenv(secret_env)
+        self.app_secret = self._get_env_value(secret_env)
         self.app_token = feishu_config.get("app_token")
         self.table_ids = feishu_config.get("table_ids", {})
         self._tenant_access_token: str | None = None
@@ -57,15 +57,15 @@ class FeishuContentStore:
     def _normalize_idea(self, record: dict[str, Any]) -> dict[str, Any]:
         fields = record.get("fields", {})
         return {
-            "idea_id": fields.get("idea_id", ""),
-            "theme": fields.get("选题", ""),
+            "idea_id": self._text_value(fields.get("idea_id")),
+            "theme": self._text_value(fields.get("选题")),
             "audience": self._single_select_value(fields.get("目标用户")),
-            "pain_point": fields.get("痛点", ""),
+            "pain_point": self._text_value(fields.get("痛点")),
             "content_type": self._single_select_value(fields.get("内容类型")),
-            "priority": fields.get("优先级", 0),
+            "priority": self._int_value(fields.get("优先级")),
             "status": self._single_select_value(fields.get("状态")),
             "source": self._single_select_value(fields.get("来源")),
-            "notes": fields.get("备注", ""),
+            "notes": self._text_value(fields.get("备注")),
             "_record_id": record.get("record_id"),
         }
 
@@ -210,4 +210,54 @@ class FeishuContentStore:
     def _single_select_value(value: Any) -> str:
         if isinstance(value, dict):
             return str(value.get("text") or value.get("name") or value.get("value") or "")
+        if isinstance(value, list):
+            return FeishuContentStore._text_value(value)
         return str(value or "")
+
+    @staticmethod
+    def _text_value(value: Any) -> str:
+        if isinstance(value, list):
+            parts = []
+            for item in value:
+                if isinstance(item, dict):
+                    parts.append(str(item.get("text") or item.get("name") or item.get("value") or ""))
+                else:
+                    parts.append(str(item or ""))
+            return "".join(parts).strip()
+        if isinstance(value, dict):
+            return str(value.get("text") or value.get("name") or value.get("value") or "").strip()
+        return str(value or "").strip()
+
+    @staticmethod
+    def _int_value(value: Any) -> int:
+        text = FeishuContentStore._text_value(value)
+        try:
+            return int(text)
+        except (TypeError, ValueError):
+            return 0
+
+    @staticmethod
+    def _get_env_value(name: str) -> str | None:
+        value = os.getenv(name)
+        if value or os.name != "nt":
+            return value
+
+        import winreg
+
+        locations = [
+            (winreg.HKEY_CURRENT_USER, r"Environment"),
+            (
+                winreg.HKEY_LOCAL_MACHINE,
+                r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment",
+            ),
+        ]
+        for root, path in locations:
+            try:
+                with winreg.OpenKey(root, path) as key:
+                    value, _ = winreg.QueryValueEx(key, name)
+            except OSError:
+                continue
+            if value:
+                os.environ[name] = str(value)
+                return str(value)
+        return None

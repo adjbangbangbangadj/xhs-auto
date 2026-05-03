@@ -52,6 +52,32 @@ def secret_env_name(config: dict[str, Any]) -> str:
     return str(feishu_config(config).get("app_secret_env", "FEISHU_APP_SECRET"))
 
 
+def get_env_value(name: str) -> str | None:
+    value = os.getenv(name)
+    if value or os.name != "nt":
+        return value
+
+    import winreg
+
+    locations = [
+        (winreg.HKEY_CURRENT_USER, r"Environment"),
+        (
+            winreg.HKEY_LOCAL_MACHINE,
+            r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment",
+        ),
+    ]
+    for root, path in locations:
+        try:
+            with winreg.OpenKey(root, path) as key:
+                value, _ = winreg.QueryValueEx(key, name)
+        except OSError:
+            continue
+        if value:
+            os.environ[name] = str(value)
+            return str(value)
+    return None
+
+
 def validate_feishu_auth_config(config: dict[str, Any]) -> str:
     feishu = feishu_config(config)
     secret_env = secret_env_name(config)
@@ -68,7 +94,7 @@ def validate_feishu_auth_config(config: dict[str, Any]) -> str:
     if not app_id or app_id == "your_feishu_app_id":
         raise RuntimeError("缺少 feishu.app_id，请在 config.yaml 中填写飞书应用 app_id。")
 
-    if not os.getenv(secret_env):
+    if not get_env_value(secret_env):
         raise RuntimeError(
             f"缺少 {secret_env} 环境变量。\n"
             f"请先设置 {secret_env}，不要把 app secret 写入 config.yaml 或提交到 Git。"
@@ -119,7 +145,7 @@ def get_tenant_access_token(config: dict[str, Any]) -> str:
     secret_env = validate_feishu_auth_config(config)
     response = requests.post(
         f"{FEISHU_BASE_URL}/auth/v3/tenant_access_token/internal",
-        json={"app_id": feishu.get("app_id"), "app_secret": os.getenv(secret_env)},
+        json={"app_id": feishu.get("app_id"), "app_secret": get_env_value(secret_env)},
         timeout=20,
     )
     data = parse_response(response, "获取飞书 tenant_access_token 失败")
