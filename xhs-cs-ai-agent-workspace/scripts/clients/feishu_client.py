@@ -7,7 +7,11 @@ import requests
 class FeishuContentStore:
     BASE_URL = "https://open.feishu.cn/open-apis"
 
-    def __init__(self, config: dict[str, Any]) -> None:
+    def __init__(
+        self,
+        config: dict[str, Any],
+        required_table_ids: tuple[str, ...] | None = None,
+    ) -> None:
         feishu_config = config.get("feishu", {})
         if not feishu_config.get("enabled", False):
             raise RuntimeError("feishu.enabled=false，请启用飞书配置或使用 --dry-run。")
@@ -26,7 +30,8 @@ class FeishuContentStore:
             missing.append(f"环境变量 {secret_env}")
         if not self.app_token or self.app_token == "your_bitable_app_token":
             missing.append("feishu.app_token")
-        for key in ("ideas", "contents", "publishing"):
+        required_table_ids = required_table_ids or ("ideas", "contents", "publishing")
+        for key in required_table_ids:
             if not self.table_ids.get(key) or str(self.table_ids.get(key)).startswith("your_"):
                 missing.append(f"feishu.table_ids.{key}")
         if missing:
