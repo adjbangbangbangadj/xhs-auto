@@ -110,7 +110,8 @@ def parse_response(response: requests.Response, message: str) -> dict[str, Any]:
             f"{message}：HTTP {response.status_code}，"
             f"code={payload.get('code')}，msg={payload.get('msg')}"
         )
-    return payload.get("data", {})
+    data = payload.get("data")
+    return data if isinstance(data, dict) else payload
 
 
 def get_tenant_access_token(config: dict[str, Any]) -> str:
@@ -153,7 +154,18 @@ def resolve_wiki_bitable_app_token(wiki_url_or_token: str, token: str) -> str:
         params={"token": wiki_token},
         timeout=20,
     )
-    data = parse_response(response, "解析飞书 Wiki 节点失败")
+    try:
+        data = parse_response(response, "解析飞书 Wiki 节点失败")
+    except RuntimeError as exc:
+        message = str(exc)
+        if "wiki:node:read" in message or "99991672" in message:
+            raise RuntimeError(
+                "飞书应用缺少 Wiki 节点只读权限，暂时无法从 Wiki 链接解析多维表格 app_token。\n"
+                "请在飞书开放平台为当前应用开通以下任一权限："
+                "wiki:node:read、wiki:wiki:readonly 或 wiki:wiki。\n"
+                "开通权限后，重新运行本命令即可继续只读解析。"
+            ) from exc
+        raise
     node = data.get("node") or data.get("space_node") or {}
     obj_type = str(node.get("obj_type") or "")
     obj_token = str(node.get("obj_token") or "")

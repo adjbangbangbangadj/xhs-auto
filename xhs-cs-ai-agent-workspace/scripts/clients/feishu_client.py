@@ -203,7 +203,8 @@ class FeishuContentStore:
                 f"{message}：HTTP {response.status_code}，"
                 f"code={payload.get('code')}，msg={payload.get('msg')}"
             )
-        return payload.get("data", {})
+        data = payload.get("data")
+        return data if isinstance(data, dict) else payload
 
     @staticmethod
     def _single_select_value(value: Any) -> str:
